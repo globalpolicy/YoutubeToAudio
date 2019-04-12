@@ -1,7 +1,7 @@
 # YoutubeToAudio
 A simple python 3.7 script to download audio from a youtube URL
 <p>
-  <a href="https://github.com/ytdl-org/youtube-dl">Youtube-dl</a> was used as a reference for this snippet.
+  <a href="https://github.com/ytdl-org/youtube-dl">youtube-dl</a> was used as a reference for this snippet.
 </p>
 
 ```
