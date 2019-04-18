@@ -30,7 +30,29 @@ videoTitle = ytArgs['title']
 player_responseString = ytArgs['player_response']
 player_responseJson = json.loads(player_responseString)
 streamingDataJson = player_responseJson['streamingData']
-adaptiveFormats = streamingDataJson['adaptiveFormats']
+adaptiveFormats = []
+try:
+    adaptiveFormats = streamingDataJson['adaptiveFormats']
+except KeyError:
+    print(
+        "adaptiveFormats key not present in ytplayer.config.args.player_response.streamingData\nUsing ytplayer.config.args.adaptive_fmts")
+    adaptiveFormatsString = ytArgs['adaptive_fmts']
+    tokens = adaptiveFormatsString.split(',')
+    for token in tokens:
+        params = token.split('&')
+        adaptiveFormat = {}
+        for param in params:
+            tmp = param.split('=')
+            key = tmp[0]
+            value = tmp[1]
+            if key == 'type':
+                adaptiveFormat['mimeType'] = urllib.parse.unquote(value)
+            if key == 'clen':
+                adaptiveFormat['contentLength'] = value
+            if key == 'url':
+                adaptiveFormat['url'] = urllib.parse.unquote(value)
+        adaptiveFormats.append(adaptiveFormat)
+
 
 longest_audio_length = 0
 longest_audio_index = 0
@@ -60,7 +82,6 @@ filename = "".join(x for x in videoTitle if x not in r'<>?*%:\/|"') + "." + file
 
 req = requests.get(audioUrl, stream=True)
 contentLength = int(req.headers['Content-Length'])
-# print(req.headers)
 downloadedlength = 0
 chunksize = 1024
 _previousDlRate = 0
